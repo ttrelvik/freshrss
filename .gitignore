@@ -1,0 +1,8 @@
+# Ignore the .env file containing sensitive credentials.
+.env
+
+# Ignore common system and IDE files
+.DS_Store
+Thumbs.db
+.vscode/
+*.log

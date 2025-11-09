@@ -1,0 +1,62 @@
+services:
+  # --- 1. FreshRSS Application ---
+  app:
+    image: freshrss/freshrss:latest
+    networks:
+      - traefik-net
+      - freshrss-net
+    volumes:
+      - freshrss-data:/var/www/FreshRSS/data
+    
+    # This loads all variables from .env into the container
+    env_file: .env
+
+    # This block is processed *after* env_file, so substitution works.
+    environment:
+      # --- Map variables from .env file ---
+      - "DB_NAME=${POSTGRES_DB}"
+      - "DB_USER=${POSTGRES_USER}"
+      - "DB_PASSWORD=${POSTGRES_PASSWORD}"
+      
+      # --- Set static values ---
+      - "DB_TYPE=pgsql"
+      - "DB_HOST=db"
+      - "DB_PORT=5432"
+      - "CRON_MIN=*/15"
+      
+    deploy:
+      replicas: 1
+      labels:
+        # --- Traefik Integration ---
+        - "traefik.enable=true"
+        - "traefik.swarm.network=traefik-net"
+        
+        # Hardcode the domain.
+        - "traefik.http.routers.freshrss.rule=Host(`rss.trelvik.net`)"
+        
+        - "traefik.http.routers.freshrss.entrypoints=https"
+        - "traefik.http.routers.freshrss.tls=true"
+        - "traefik.http.routers.freshrss.tls.certresolver=myresolver"
+        - "traefik.http.services.freshrss.loadbalancer.server.port=80"
+        - "traefik.http.services.freshrss.loadbalancer.passhostheader=true"
+
+  # --- 2. PostgreSQL Database ---
+  db:
+    image: postgres:16
+    networks:
+      - freshrss-net
+    volumes:
+      - freshrss-db:/var/lib/postgresql/data
+    env_file: .env
+    deploy:
+      replicas: 1
+
+volumes:
+  freshrss-data:
+  freshrss-db:
+
+networks:
+  traefik-net:
+    external: true
+  freshrss-net:
+    driver: overlay
