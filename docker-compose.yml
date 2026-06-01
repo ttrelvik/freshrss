@@ -42,7 +42,7 @@ services:
 
   # --- 2. PostgreSQL Database ---
   db:
-    image: postgres:16
+    image: postgres:17
     networks:
       - freshrss-net
     volumes:
