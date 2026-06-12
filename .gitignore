@@ -6,3 +6,10 @@
 Thumbs.db
 .vscode/
 *.log
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+.terraform.lock.hcl
+*.tfvars
