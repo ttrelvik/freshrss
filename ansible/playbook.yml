@@ -1,0 +1,43 @@
+---
+- name: Prepare Host for FreshRSS Stack
+  hosts: all
+  become: true
+  vars:
+    freshrss_backup_dir: "/var/backups/freshrss"
+    postgres_user: "freshrss_user"
+    postgres_db: "freshrss"
+    postgres_password: "{{ lookup('ansible.builtin.ini', 'POSTGRES_PASSWORD', type='properties', file='../.env') }}"
+    freshrss_backup_cron_hour: "2"
+    freshrss_backup_cron_minute: "0"
+    stack_name: "freshrss"
+
+  tasks:
+    - name: Ensure Docker service is running and enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Create database backup directory with restricted permissions
+      ansible.builtin.file:
+        path: "{{ freshrss_backup_dir }}"
+        state: directory
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Deploy Swarm-resilient database backup script
+      ansible.builtin.template:
+        src: templates/freshrss-backup.sh.j2
+        dest: /usr/local/bin/freshrss-backup.sh
+        owner: root
+        group: root
+        mode: '0700'
+
+    - name: Configure cron job for database backups
+      ansible.builtin.cron:
+        name: "FreshRSS Database Backup"
+        hour: "{{ freshrss_backup_cron_hour }}"
+        minute: "{{ freshrss_backup_cron_minute }}"
+        job: "/usr/local/bin/freshrss-backup.sh >/dev/null 2>&1"
+        state: present
