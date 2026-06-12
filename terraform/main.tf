@@ -44,13 +44,12 @@ resource "docker_volume" "freshrss_db" {
 }
 
 # --- Secrets ---
-# Define the database password secret from the pre-existing value
+# Define the database password secret with a dynamic name based on the content hash
 resource "docker_secret" "db_password" {
-  name = "freshrss_db_password_v1"
+  name = "freshrss_db_password_${substr(sha256(var.postgres_password), 0, 8)}"
   data = base64encode(var.postgres_password)
 
   lifecycle {
-    ignore_changes        = [name]
     create_before_destroy = true
   }
 }
