@@ -14,10 +14,21 @@ mkdir -p "${BACKUP_DIR}"
 
 echo "Starting FreshRSS database backup..."
 
+# Locate the active DB container running on this host
+CONTAINER_ID=$(docker ps -q -f name="{{ stack_name }}_db" | head -n1)
+
+if [ -n "${CONTAINER_ID}" ]; then
+  # Dynamically retrieve the database password from the container's mounted secret
+  PGPASSWORD=$(docker exec "${CONTAINER_ID}" cat /run/secrets/freshrss_db_password)
+  export PGPASSWORD
+else
+  echo "Warning: Database container not found on this host. Network-based backup may fail if authentication is required." >&2
+fi
+
 # Attempt 1: Network-based pg_dump using a temporary container attached to the overlay network.
 # This works on any Swarm manager node regardless of where the DB task is currently scheduled.
 if docker run --rm --network="{{ stack_name }}_freshrss-net" \
-  -e PGPASSWORD="{{ postgres_password }}" \
+  -e PGPASSWORD \
   postgres:16 \
   pg_dump -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" > "${BACKUP_FILE}"; then
   

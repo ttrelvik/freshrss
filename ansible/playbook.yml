@@ -6,7 +6,6 @@
     freshrss_backup_dir: "/var/backups/freshrss"
     postgres_user: "freshrss_user"
     postgres_db: "freshrss"
-    postgres_password: "{{ lookup('ansible.builtin.ini', 'POSTGRES_PASSWORD', type='properties', file='../.env') }}"
     freshrss_backup_cron_hour: "2"
     freshrss_backup_cron_minute: "0"
     stack_name: "freshrss"
