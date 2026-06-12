@@ -1,5 +1,4 @@
 stack_name        = "freshrss"
-postgres_password = "YOUR_EXISTING_DB_PASSWORD"
 postgres_db       = "freshrss"
 postgres_user     = "freshrss_user"
 timezone          = "America/New_York"
