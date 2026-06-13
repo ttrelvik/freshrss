@@ -14,14 +14,11 @@
       "allowedVersions": "< 17.0.0"
     }
   ],
-  "regexManagers": [
+  "customManagers": [
     {
-      "fileMatch": [
-        "(^|/)variables\\.tf$"
-      ],
-      "matchStrings": [
-        "variable\\s+\"[^\"]+_image\"\\s+\\{[^}]*default\\s*=\\s*\"(?<depName>[^:]+):(?<currentValue>[^\"]+)\""
-      ],
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)variables\\.tf$/"],
+      "matchStrings": ["variable\\s+\"[^\"]+_image\"\\s+\\{[^}]*default\\s*=\\s*\"(?<depName>[^:]+):(?<currentValue>[^\"]+)\""],
       "datasourceTemplate": "docker"
     }
   ]
