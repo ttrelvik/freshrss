@@ -10,5 +10,16 @@
       ],
       "allowedVersions": "< 17.0.0"
     }
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": [
+        "(^|/)variables\\.tf$"
+      ],
+      "matchStrings": [
+        "variable\\s+\"[^\"]+_image\"\\s+\\{[^}]*default\\s*=\\s*\"(?<depName>[^:]+):(?<currentValue>[^\"]+)\""
+      ],
+      "datasourceTemplate": "docker"
+    }
   ]
 }
