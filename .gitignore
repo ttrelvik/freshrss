@@ -13,3 +13,8 @@ Thumbs.db
 *.tfstate.backup
 .terraform.lock.hcl
 *.tfvars
+
+# Ignore .sql and .gz backups
+*.sql
+*.tar.gz
+*.tgz
