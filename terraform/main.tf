@@ -71,6 +71,14 @@ resource "docker_service" "db" {
         TZ                     = var.timezone
       }
 
+      healthcheck {
+        test         = ["CMD", "pg_isready", "-U", var.postgres_user, "-d", var.postgres_db]
+        interval     = "10s"
+        timeout      = "5s"
+        retries      = 3
+        start_period = "10s"
+      }
+
       secrets {
         secret_id   = docker_secret.db_password.id
         secret_name = docker_secret.db_password.name
@@ -104,6 +112,15 @@ resource "docker_service" "db" {
     networks_advanced {
       id      = docker_network.freshrss_net.id
       aliases = ["db"]
+    }
+
+    resources {
+      limits {
+        memory_bytes = 268435456
+      }
+      reservation {
+        memory_bytes = 100663296
+      }
     }
   }
 
@@ -152,6 +169,14 @@ resource "docker_service" "app" {
         CRON_MIN          = "*/15"
       }
 
+      healthcheck {
+        test         = ["CMD-SHELL", "bash -c 'exec 3<>/dev/tcp/127.0.0.1/80 && echo -e \"GET / HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n\" >&3 && head -n 1 <&3 | grep -qE \"200|302\"'"]
+        interval     = "10s"
+        timeout      = "5s"
+        retries      = 3
+        start_period = "10s"
+      }
+
       secrets {
         secret_id   = docker_secret.db_password.id
         secret_name = docker_secret.db_password.name
@@ -190,6 +215,15 @@ resource "docker_service" "app" {
     networks_advanced {
       id      = docker_network.freshrss_net.id
       aliases = ["app"]
+    }
+
+    resources {
+      limits {
+        memory_bytes = 268435456
+      }
+      reservation {
+        memory_bytes = 134217728
+      }
     }
   }
 
