@@ -31,7 +31,7 @@ variable "postgres_password" {
 variable "freshrss_image" {
   type        = string
   description = "The image name and tag for FreshRSS application"
-  default     = "freshrss/freshrss:1.29.1"
+  default     = "freshrss/freshrss:1.30.0"
 }
 
 variable "postgres_image" {
