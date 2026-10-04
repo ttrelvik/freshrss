@@ -86,7 +86,7 @@ resource "docker_service" "db" {
       }
 
       mounts {
-        target = "/var/lib/postgresql/data"
+        target = "/var/lib/postgresql"
         source = docker_volume.freshrss_db.name
         type   = "volume"
         volume_options {

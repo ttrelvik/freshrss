@@ -37,5 +37,5 @@ variable "freshrss_image" {
 variable "postgres_image" {
   type        = string
   description = "The image name and tag for PostgreSQL"
-  default     = "postgres:16.15"
+  default     = "postgres:18.6"
 }

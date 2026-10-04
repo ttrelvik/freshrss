@@ -29,7 +29,7 @@ fi
 # This works on any Swarm manager node regardless of where the DB task is currently scheduled.
 if docker run --rm --network="{{ stack_name }}_freshrss-net" \
   -e PGPASSWORD \
-  postgres:16 \
+  postgres:18 \
   pg_dump -h "${DB_HOST}" -U "${DB_USER}" -d "${DB_NAME}" > "${BACKUP_FILE}"; then
   
   echo "Network-based pg_dump succeeded."
