@@ -3,22 +3,27 @@
   "extends": [
     "config:recommended"
   ],
+  "dependencyDashboard": true,
   "ignorePaths": [
     "**/main.tf"
   ],
   "packageRules": [
     {
-      "matchPackageNames": [
-        "postgres"
+      "matchUpdateTypes": [
+        "major"
       ],
-      "allowedVersions": "< 17.0.0"
+      "dependencyDashboardApproval": true
     }
   ],
   "customManagers": [
     {
       "customType": "regex",
-      "managerFilePatterns": ["/(^|/)variables\\.tf$/"],
-      "matchStrings": ["variable\\s+\"[^\"]+_image\"\\s+\\{[^}]*default\\s*=\\s*\"(?<depName>[^:]+):(?<currentValue>[^\"]+)\""],
+      "managerFilePatterns": [
+        "/(^|/)variables\\.tf$/"
+      ],
+      "matchStrings": [
+        "variable\\s+\"[^\"]+_image\"\\s+\\{[^}]*default\\s*=\\s*\"(?<depName>[^:]+):(?<currentValue>[^\"]+)\""
+      ],
       "datasourceTemplate": "docker"
     }
   ]
